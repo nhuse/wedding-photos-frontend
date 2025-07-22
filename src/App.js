@@ -1,23 +1,18 @@
-import logo from './logo.svg';
+import logo from './logo.png';
 import './App.css';
+import FileUploader from './FileUploader';
+import { supabase } from './utils/supabase';
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <img src={logo} style={{ width: '250px', height: '250px' }} alt="logo" />
       </header>
+      <div>
+        <FileUploader />
+      </div>
     </div>
   );
 }
