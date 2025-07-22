@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './FileUploader.css';
-function FileUploader() {
+function FileUploader({ uppy }) {
   const [previews, setPreviews] = useState([]);
 
   const handleFileChange = (event) => {
@@ -10,6 +10,12 @@ function FileUploader() {
       return { file, url };
     });
     setPreviews(prev => [...prev, ...newPreviews]);
+    // Add files to Uppy instance
+    files.forEach(file => uppy.addFile({
+      name: file.name,
+      type: file.type,
+      data: file
+    }));
   };
 
   const removeFile = (indexToRemove) => {
@@ -19,12 +25,32 @@ function FileUploader() {
       URL.revokeObjectURL(prev[indexToRemove].url);
       return newPreviews;
     });
+    // Optionally, remove from Uppy as well
+    const uppyFiles = uppy.getFiles();
+    if (uppyFiles[indexToRemove]) {
+      uppy.removeFile(uppyFiles[indexToRemove].id);
+    }
   };
 
   const handleUpload = () => {
-    console.log(previews);
-    setPreviews([]);
+    uppy.upload();
   };
+
+  useEffect(() => {
+    const onComplete = (result) => {
+      alert(`Upload complete! Successfully uploaded ${result.successful.length} files.`);
+      setPreviews([]);
+    };
+    const onError = (error) => {
+      alert(`Upload error: ${error}`);
+    };
+    uppy.on('complete', onComplete);
+    uppy.on('error', onError);
+    return () => {
+      uppy.off('complete', onComplete);
+      uppy.off('error', onError);
+    };
+  }, [uppy]);
 
   return (
     <div className='file-uploader'>
