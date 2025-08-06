@@ -1,0 +1,14 @@
+{
+  "name": "wedding-photos-r2-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for R2 operations",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+} 

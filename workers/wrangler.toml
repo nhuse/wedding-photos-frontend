@@ -1,0 +1,20 @@
+name = "wedding-photos-r2-worker"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# R2 bucket bindings
+[[r2_buckets]]
+binding = "WEDDING_PHOTOS_BUCKET"
+bucket_name = "photos"
+
+[[r2_buckets]]
+binding = "WEDDING_VIDEOS_BUCKET"
+bucket_name = "videos"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# Secrets (set these with wrangler secret put)
+# R2_ACCESS_KEY_ID
+# R2_SECRET_ACCESS_KEY 
