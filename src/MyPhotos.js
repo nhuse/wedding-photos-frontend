@@ -26,23 +26,43 @@ function MyPhotos({ onFileDeleted = null }) {
       // Separate photos and videos based on file type
       const allFiles = result.files || [];
       console.log('All files:', allFiles); // Debug logging
+      console.log('Total files returned:', allFiles.length);
       
       // Check what fields are actually available
       if (allFiles.length > 0) {
         console.log('First file structure:', allFiles[0]);
+        console.log('First file fields:', Object.keys(allFiles[0]));
+        console.log('First file originalName:', allFiles[0].originalName);
+        console.log('First file name:', allFiles[0].name);
+        console.log('First file key:', allFiles[0].key);
+        console.log('First file fileType:', allFiles[0].fileType);
+        console.log('First file type:', allFiles[0].type);
+        
+        // Check if there are any video-like files
+        const potentialVideos = allFiles.filter(file => {
+          const key = file.key.toLowerCase();
+          return key.includes('.mp4') || key.includes('.mov') || key.includes('.m4v') || key.includes('.3gp');
+        });
+        console.log('Potential video files by extension:', potentialVideos);
       }
       
       // Filter based on the actual field names in the response
       const photos = allFiles.filter(file => {
         // Check multiple possible field names
         const fileType = file.fileType || file.type || 'image';
-        console.log(`File ${file.key}: fileType=${file.fileType}, type=${file.type}, filtered as: ${fileType === 'image' || fileType === 'photo' ? 'photo' : 'video'}`);
-        return fileType === 'image' || fileType === 'photo';
+        const isPhoto = fileType === 'image' || fileType === 'photo' || fileType.startsWith('image/');
+        console.log(`File ${file.key}: fileType=${file.fileType}, type=${file.type}, isPhoto=${isPhoto}`);
+        return isPhoto;
       });
       
       const videos = allFiles.filter(file => {
         const fileType = file.fileType || file.type || 'image';
-        return fileType === 'video';
+        // More comprehensive video detection
+        const isVideo = fileType === 'video' || 
+                       fileType.startsWith('video/') ||
+                       file.key.toLowerCase().match(/\.(mp4|mov|avi|wmv|flv|webm|m4v|3gp)$/);
+        console.log(`File ${file.key}: fileType=${file.fileType}, type=${file.type}, isVideo=${isVideo}, key=${file.key}`);
+        return isVideo;
       });
       
       console.log('Filtered photos:', photos);
@@ -243,9 +263,9 @@ function MyPhotos({ onFileDeleted = null }) {
           color: '#666',
           fontSize: '2rem'
         }}>
-          <div>You haven't uploaded any photos yet.</div>
+          <div>You haven't uploaded any photos or videos yet.</div>
           <div style={{ marginTop: '10px', fontSize: '1.75rem' }}>
-            Upload some photos to see them here!
+            Upload some to see them here!
           </div>
         </div>
       )}

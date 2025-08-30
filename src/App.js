@@ -261,20 +261,20 @@ function App() {
           marginTop: '0px',
           textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
         }}>
-          Wedding Photo Gallery
+          Wedding Gallery
         </h3>
         <div className="nav-tab-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '16px' }}>
           <button 
             className={`nav-tab-button ${currentView === 'all-photos' ? 'selected' : ''}`}
             onClick={() => setCurrentView('all-photos')}
           >
-            All Photos ({imageObjects.length})
+            All Photos & Videos({imageObjects.length})
           </button>
           <button 
             className={`nav-tab-button ${currentView === 'my-photos' ? 'selected' : ''}`}
             onClick={() => setCurrentView('my-photos')}
           >
-            My Photos
+            My Photos & Videos
           </button>
         </div>
         
