@@ -152,16 +152,10 @@ function FileUploaderWorker({ onUploadSuccess }) {
         />
         <label
           htmlFor="file-input-worker"
+          className="file-uploader-upload-btn"
           style={{
-            padding: '6px 12px',
-            backgroundColor: uploading ? '#ccc' : '#6699CC',
-            color: 'white',
-            borderRadius: '4px',
-            cursor: uploading ? 'not-allowed' : 'pointer',
-            display: 'inline-block',
-            fontSize: '20px',
-            fontWeight: 'bold',
             opacity: uploading ? 0.6 : 1,
+            cursor: uploading ? 'not-allowed' : 'pointer',
           }}
         >
           Add Images and Videos
@@ -185,20 +179,13 @@ function FileUploaderWorker({ onUploadSuccess }) {
                   style={{ maxWidth: 200, maxHeight: 200, objectFit: 'contain' }}
                 />
                 <button
+                  className="remove-btn"
                   onClick={() => removeFile(idx)}
                   disabled={uploading}
                   style={{
                     position: 'absolute',
                     top: 5,
-                    right: 5,
-                    background: uploading ? '#ccc' : 'red',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: 20,
-                    height: 20,
-                    cursor: uploading ? 'not-allowed' : 'pointer',
-                    opacity: uploading ? 0.6 : 1
+                    right: 5
                   }}
                 >
                   ×
@@ -214,20 +201,13 @@ function FileUploaderWorker({ onUploadSuccess }) {
                   style={{ maxWidth: 200, maxHeight: 200, objectFit: 'contain' }}
                 />
                 <button
+                  className="remove-btn"
                   onClick={() => removeFile(idx)}
                   disabled={uploading}
                   style={{
                     position: 'absolute',
                     top: 5,
-                    right: 5,
-                    background: uploading ? '#ccc' : '#6699cc',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: 20,
-                    height: 20,
-                    cursor: uploading ? 'not-allowed' : 'pointer',
-                    opacity: uploading ? 0.6 : 1
+                    right: 5
                   }}
                 >
                   ×
@@ -243,20 +223,12 @@ function FileUploaderWorker({ onUploadSuccess }) {
       {/* Upload Button */}
       {previews.length > 0 && (
         <button 
+          className="file-uploader-upload-btn"
           onClick={handleUpload}
           disabled={uploading}
           style={{
             marginTop: 16,
-            marginBottom: 16,
-            padding: '12px 24px',
-            backgroundColor: '#6699cc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: uploading ? 'not-allowed' : 'pointer',
-            opacity: uploading ? 0.6 : 1
+            marginBottom: 16
           }}
         >
           {uploading ? 'Uploading via Worker...' : 'Publish Your Photos and Videos'}

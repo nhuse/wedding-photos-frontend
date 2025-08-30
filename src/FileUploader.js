@@ -146,7 +146,7 @@ function FileUploader({ uppy }) {
           }
         })}
       </div>
-      {previews.length > 0 && <button onClick={handleUpload}>Publish Your Photos and Videos</button>}
+      {previews.length > 0 && <button className='file-uploader-upload-btn' onClick={handleUpload}>Publish Your Photos and Videos</button>}
     </div>
   );
 }

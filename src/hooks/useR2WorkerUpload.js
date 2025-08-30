@@ -27,7 +27,7 @@ export const useR2WorkerUpload = (sessionId = null) => {
       const fileKey = generateFileKey(file.name, bucketType);
       
       // Upload to R2 via Worker with session tracking
-      const result = await uploadToR2ViaWorker(file, fileKey, bucketType, sessionId);
+      const result = await uploadToR2ViaWorker(file, fileKey, sessionId);
       
       setUploadProgress(100);
       setUploading(false);

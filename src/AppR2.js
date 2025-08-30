@@ -19,14 +19,14 @@ async function getR2Files() {
     // Convert photos to the format expected by ImageContainer
     const photoObjects = photos.map(file => ({
       ...file,
-      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL}/download?key=${encodeURIComponent(file.key)}&bucketType=photos`,
+      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL}/download?key=${encodeURIComponent(file.key)}`,
       type: 'photo'
     }));
     
     // Convert videos to the format expected by ImageContainer
     const videoObjects = videos.map(file => ({
       ...file,
-      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL}/download?key=${encodeURIComponent(file.key)}&bucketType=videos`,
+      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL}/download?key=${encodeURIComponent(file.key)}`,
       type: 'video'
     }));
     

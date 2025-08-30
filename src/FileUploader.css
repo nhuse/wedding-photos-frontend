@@ -3,26 +3,183 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 15px;
   width: 100%;
   height: fit-content;
   margin: 0;
-  width: 50%;
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
 }
 
 .file-uploader-title {
-  color: white;
+  color: #5D4037;
   font-size: 24px;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 15px 0;
   padding: 0;
   text-align: center;
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .file-uploader-selected-files {
-  color: white;
-  font-size: 18px;
-  margin: 10px 0;
+  color: #5D4037;
+  font-size: 1.5rem;
+  margin: 15px 0;
   padding: 0;
   text-align: center;
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+}
+
+/* Rustic upload button styling */
+.file-uploader button {
+  background: linear-gradient(135deg, #6B7A8F 0%, #5A86AD 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(107, 122, 143, 0.3);
+  font-family: 'Playfair Display', 'Georgia', serif;
+}
+
+.file-uploader button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(90, 134, 173, 0.4);
+}
+
+.file-uploader button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Upload label styling */
+.file-uploader label {
+  background: linear-gradient(135deg, #6B7A8F 0%, #5A86AD 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(107, 122, 143, 0.3);
+  font-family: 'Playfair Display', 'Georgia', serif;
+  display: inline-block;
+}
+
+.file-uploader label:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(90, 134, 173, 0.4);
+}
+
+.file-uploader label:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Specific upload button styling - higher specificity to override gradient */
+.file-uploader .file-uploader-upload-btn {
+  background: rgb(90, 134, 173) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  font-size: 1.25rem !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(107, 122, 143, 0.3) !important;
+  font-family: 'Playfair Display', 'Georgia', serif !important;
+  display: inline-block !important;
+}
+
+.file-uploader .file-uploader-upload-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(90, 134, 173, 0.4) !important;
+}
+
+/* Remove button styling - for the X buttons on image placeholders */
+.file-uploader .remove-btn {
+  background: red !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+.file-uploader .remove-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.file-uploader .remove-btn:disabled {
+  background: #ccc !important;
+  cursor: not-allowed !important;
+}
+
+
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .file-uploader {
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .file-uploader-title {
+    font-size: 20px;
+    margin: 10px 0;
+  }
+  
+  .file-uploader-selected-files {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  .file-uploader button,
+  .file-uploader label,
+  .file-uploader-upload-btn {
+    padding: 10px 20px !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .file-uploader {
+    gap: 8px;
+  }
+  
+  .file-uploader-title {
+    font-size: 18px;
+    margin: 8px 0;
+  }
+  
+  .file-uploader-selected-files {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+  
+  .file-uploader button,
+  .file-uploader label,
+  .file-uploader-upload-btn {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+  }
 }

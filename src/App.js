@@ -17,25 +17,62 @@ async function getR2Files() {
     const videosResult = await listFilesFromR2ViaWorker('', 100, 'videos');
     const videos = videosResult.files || [];
     
+    // Debug: Log the first file to see what fields are available
+    if (photos.length > 0) {
+      console.log('Sample photo file structure:', photos[0]);
+      console.log('Photo file fields:', Object.keys(photos[0]));
+    }
+    if (videos.length > 0) {
+      console.log('Sample video file structure:', videos[0]);
+      console.log('Video file fields:', Object.keys(videos[0]));
+    }
+    
     // Convert photos to the format expected by ImageContainer
-    const photoObjects = photos.map(file => ({
-      ...file,
-      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}&bucketType=photos`,
-      type: 'photo'
-    }));
+    const photoObjects = photos.map(file => {
+      const mappedFile = {
+        ...file,
+        publicUrl: `${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}`,
+        type: 'photo',
+        // Ensure consistent field naming for display
+        originalName: file.originalName || file.name || (() => {
+          // If no original name, create a user-friendly name from the key
+          const keyParts = file.key.split('.');
+          const extension = keyParts.pop();
+          const timestamp = keyParts[0];
+          const date = new Date(parseInt(timestamp));
+          return `Photo ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.${extension}`;
+        })()
+      };
+      console.log('Mapped photo file:', mappedFile);
+      return mappedFile;
+    });
     
     // Convert videos to the format expected by ImageContainer
-    const videoObjects = videos.map(file => ({
-      ...file,
-      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}&bucketType=videos`,
-      type: 'video'
-    }));
+    const videoObjects = videos.map(file => {
+      const mappedFile = {
+        ...file,
+        publicUrl: `${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}`,
+        type: 'video',
+        // Ensure consistent field naming for display
+        originalName: file.originalName || file.name || (() => {
+          // If no original name, create a user-friendly name from the key
+          const keyParts = file.key.split('.');
+          const extension = keyParts.pop();
+          const timestamp = keyParts[0];
+          const date = new Date(parseInt(timestamp));
+          return `Video ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.${extension}`;
+        })()
+      };
+      console.log('Mapped video file:', mappedFile);
+      return mappedFile;
+    });
     
     // Combine photos and videos, sort by upload date (most recent first), and take the 10 most recent
     const allMedia = [...photoObjects, ...videoObjects]
       .sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded))
       .slice(0, 10);
     
+    console.log('Final allMedia array:', allMedia);
     return { imageObjects: allMedia };
   } catch (error) {
     console.error('Error fetching R2 files:', error);
@@ -75,7 +112,7 @@ function App() {
     switch (currentView) {
       case 'all-photos':
         return (
-          <div className='images-container'>
+          <div style={{width: '90%'}}>
             {loading ? (
               <div style={{ textAlign: 'center', padding: '20px' }}>
                 <div>Loading images and videos...</div>
@@ -89,7 +126,7 @@ function App() {
           </div>
         );
       case 'my-photos':
-        return <MyPhotos />;
+        return <MyPhotos onFileDeleted={loadMedia} />;
       default:
         return (
           <div className='images-container'>
@@ -108,78 +145,157 @@ function App() {
     }
   }, [currentView, loading, imageObjects]);
 
-  const getNavButtonStyle = useCallback((view) => ({
-    padding: '12px 24px',
-    backgroundColor: currentView === view ? '#4caf50' : '#6699cc',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    margin: '0 8px',
-    transition: 'background-color 0.3s ease'
-  }), [currentView]);
+
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} style={{ width: '250px', height: '250px' }} alt="logo" />
+    <div className="App" style={{
+      background: 'linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%, #F0F8FF 100%)',
+      minHeight: '100vh',
+      fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif'
+    }}>
+      <header className="App-header" style={{
+        background: '#F5F5DC',
+        borderBottom: '3px solid #6B7A8F',
+        boxShadow: '0 4px 12px rgba(107, 122, 143, 0.3)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 20px',
+        position: 'relative',
+      }}>
+        <img src={logo} style={{ 
+          width: '150px', 
+          height: '150px',
+          filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))',
+          margin: '10px 0'
+        }} alt="logo" />
+        
+        <span style={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
+          fontWeight: 'bold',
+          color: '#5D4037',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+          whiteSpace: 'nowrap',
+          zIndex: 1,
+          fontSize: '3.5rem',
+          marginBottom: '2%'
+        }}>
+          Nathan and Nayeli Huse's Wedding
+        </span>
+        
+        <span style={{
+          position: 'absolute',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          top: '60%',
+          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+          color: '#6B7A8F',
+          textAlign: 'center',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          whiteSpace: 'nowrap',
+          zIndex: 1,
+        }}>
+          11/21/2025
+        </span>
+        
+        {/* Invisible spacer to maintain layout balance */}
+        <div style={{ width: '150px', visibility: 'hidden' }}></div>
       </header>
       
-      {/* Upload Section - Always Visible */}
+      {/* Upload Section - Separate Container */}
       <div style={{ 
-        
-        backgroundColor: '#f8f9fa',
-        margin: '10px 20px 0 20px',
-        borderRadius: '8px 8px 0 0',
-        borderTop: '1px solid #e9ecef',
-        borderRight: '1px solid #e9ecef',
-        borderLeft: '1px solid #e9ecef',
+        backgroundColor: 'white',
+        margin: '10px 20px 20px 20px',
+        borderRadius: '12px',
+        border: '2px solid #6B7A8F',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: 'fit-content'
+        height: 'fit-content',
+        boxShadow: '0 4px 12px rgba(107, 122, 143, 0.2)',
+        padding: '20px'
       }}>
-        <h3 style={{ marginBottom: '15px', color: '#333', textAlign: 'center' }}>
-          Upload Your Wedding Photos & Videos
+        <h3 style={{ 
+          marginBottom: '15px', 
+          color: '#5D4037', 
+          textAlign: 'center',
+          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
+          fontWeight: 'bold',
+          marginTop: '0px',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          fontSize: '2.5rem'
+        }}>
+          Upload Your Wedding Memories
         </h3>
         <FileUploaderWorker onUploadSuccess={handleUploadSuccess} />
       </div>
       
-      {/* Navigation Tabs */}
+      {/* Navigation & Photos Section - Combined */}
       <div style={{ 
-        textAlign: 'center',
-        margin: '0 20px',
-        backgroundColor: '#f8f9fa',
-        borderBottom: '1px solid #e9ecef',
-        borderRight: '1px solid #e9ecef',
-        borderLeft: '1px solid #e9ecef',
-        paddingBottom: '20px',
+        backgroundColor: 'white',
+        margin: '0 20px 20px 20px',
+        borderRadius: '12px',
+        border: '2px solid #6B7A8F',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         height: 'fit-content',
-        borderRadius: '0 0 8px 8px'
+        boxShadow: '0 4px 12px rgba(107, 122, 143, 0.2)',
+        padding: '20px'
       }}>
-        <h3 style={{ marginBottom: '15px', color: '#333', marginTop: '0px' }}>Wedding Photo Gallery</h3>
-        <div>
+        {/* Navigation Section */}
+        <h3 style={{ 
+          marginBottom: '20px', 
+          color: '#5D4037', 
+          textAlign: 'center',
+          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+          marginTop: '0px',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+        }}>
+          Wedding Photo Gallery
+        </h3>
+        <div className="nav-tab-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '16px' }}>
           <button 
+            className={`nav-tab-button ${currentView === 'all-photos' ? 'selected' : ''}`}
             onClick={() => setCurrentView('all-photos')}
-            style={getNavButtonStyle('all-photos')}
           >
-            📸 All Photos ({imageObjects.length})
+            All Photos ({imageObjects.length})
           </button>
           <button 
+            className={`nav-tab-button ${currentView === 'my-photos' ? 'selected' : ''}`}
             onClick={() => setCurrentView('my-photos')}
-            style={getNavButtonStyle('my-photos')}
           >
-            👤 My Photos
+            My Photos
           </button>
         </div>
-      </div>
-
-      {/* Current View */}
-      <div>
-        {renderCurrentView}
+        
+        {/* Divider */}
+        <div style={{
+          width: '80%',
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent 0%, #6B7A8F 50%, transparent 100%)',
+          margin: '20px 0',
+          opacity: 0.3
+        }}></div>
+        
+        {/* Current View - Photos Display */}
+        <div style={{ 
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          {renderCurrentView}
+        </div>
       </div>
       
       <div id="drag-drop-area"></div>

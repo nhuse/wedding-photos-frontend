@@ -61,16 +61,14 @@ export const validateGuestSession = async (sessionId) => {
 };
 
 /**
- * Get user's own photos
+ * Get user's own photos and videos
  * @param {string} sessionId - Guest session ID
- * @param {string} bucketType - 'photos' or 'videos'
- * @returns {Promise<Array>} - List of user's files
+ * @returns {Promise<Object>} - List of user's files
  */
-export const getMyPhotos = async (sessionId, bucketType = 'photos') => {
+export const getMyPhotos = async (sessionId) => {
   try {
     const url = new URL(`${WORKER_URL}/my-photos`);
     url.searchParams.set('sessionId', sessionId);
-    url.searchParams.set('bucketType', bucketType);
 
     const response = await fetch(url.toString());
 
@@ -87,26 +85,19 @@ export const getMyPhotos = async (sessionId, bucketType = 'photos') => {
 };
 
 /**
- * Upload file to R2 via Worker with session tracking
+ * Upload file to R2 via Worker
  * @param {File} file - File to upload
  * @param {string} key - Optional custom key
- * @param {string} bucketType - 'photos' or 'videos'
  * @param {string} sessionId - Guest session ID
  * @returns {Promise<Object>} - Upload result
  */
-export const uploadToR2ViaWorker = async (file, key = null, bucketType = null, sessionId = null) => {
+export const uploadToR2ViaWorker = async (file, key = null, sessionId = null) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
     if (key) {
       formData.append('key', key);
     }
-    
-    // Auto-detect bucket type based on file type if not provided
-    if (!bucketType) {
-      bucketType = file.type.startsWith('video/') ? 'videos' : 'photos';
-    }
-    formData.append('bucketType', bucketType);
 
     // Add session ID if provided
     if (sessionId) {
@@ -133,11 +124,10 @@ export const uploadToR2ViaWorker = async (file, key = null, bucketType = null, s
 /**
  * Get file from R2 via Worker
  * @param {string} key - File key
- * @param {string} bucketType - 'photos' or 'videos'
  * @returns {Promise<string>} - File URL
  */
-export const getFileFromR2ViaWorker = (key, bucketType = 'photos') => {
-  return `${WORKER_URL}/download?key=${encodeURIComponent(key)}&bucketType=${bucketType}`;
+export const getFileFromR2ViaWorker = (key) => {
+  return `${WORKER_URL}/download?key=${encodeURIComponent(key)}`;
 };
 
 /**
@@ -171,15 +161,13 @@ export const listFilesFromR2ViaWorker = async (prefix = '', limit = 100, bucketT
 /**
  * Delete file from R2 via Worker with ownership validation
  * @param {string} key - File key
- * @param {string} bucketType - 'photos' or 'videos'
  * @param {string} sessionId - Guest session ID for ownership validation
  * @returns {Promise<Object>} - Delete result
  */
-export const deleteFileFromR2ViaWorker = async (key, bucketType = 'photos', sessionId = null) => {
+export const deleteFileFromR2ViaWorker = async (key, sessionId = null) => {
   try {
     const url = new URL(`${WORKER_URL}/delete`);
     url.searchParams.set('key', key);
-    url.searchParams.set('bucketType', bucketType);
     
     if (sessionId) {
       url.searchParams.set('sessionId', sessionId);
@@ -204,12 +192,11 @@ export const deleteFileFromR2ViaWorker = async (key, bucketType = 'photos', sess
 /**
  * Generate unique file key
  * @param {string} fileName - Original file name
- * @param {string} bucketName - Bucket name (images/videos)
  * @returns {string} - Unique file key
  */
-export const generateFileKey = (fileName, bucketName = 'images') => {
+export const generateFileKey = (fileName) => {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 15);
   const extension = fileName.split('.').pop();
-  return `${bucketName}/${timestamp}-${randomId}.${extension}`;
+  return `${timestamp}-${randomId}.${extension}`;
 }; 

@@ -1,6 +1,6 @@
 /**
  * Cloudflare Worker for R2 operations
- * Handles file uploads, downloads, listing, and guest authentication
+ * Simple, clean implementation for wedding photos
  */
 
 export default {
@@ -78,8 +78,6 @@ async function handleGuestAuth(request, env, corsHeaders) {
     const sessionId = generateSessionId();
     const timestamp = Date.now();
     
-    // Store session in KV (if available) or use a simple approach
-    // For now, we'll use a simple approach with session metadata
     const sessionData = {
       sessionId,
       createdAt: timestamp,
@@ -133,9 +131,8 @@ async function handleValidateSession(request, env, corsHeaders) {
       });
     }
 
-    // For now, we'll accept any session ID that looks valid
-    // In a production system, you'd validate against stored sessions
-    const isValid = /^[a-zA-Z0-9]{16,}$/.test(sessionId);
+    // Validate session ID format: timestamp-randomid (e.g., 1756516147652-ays24mr0lk)
+    const isValid = /^\d{13}-[a-zA-Z0-9]{10}$/.test(sessionId);
 
     return new Response(JSON.stringify({
       success: true,
@@ -160,7 +157,7 @@ async function handleValidateSession(request, env, corsHeaders) {
 }
 
 /**
- * Handle file upload to R2 with guest session tracking
+ * Handle file upload to R2
  */
 async function handleUpload(request, env, corsHeaders) {
   if (request.method !== 'POST') {
@@ -173,9 +170,8 @@ async function handleUpload(request, env, corsHeaders) {
   try {
     const formData = await request.formData();
     const file = formData.get('file');
-    const bucketType = formData.get('bucketType') || 'photos'; // 'photos' or 'videos'
-    const sessionId = formData.get('sessionId'); // Guest session ID
-    const key = formData.get('key') || generateFileKey(file.name, bucketType);
+    const sessionId = formData.get('sessionId');
+    const key = formData.get('key') || generateFileKey(file.name);
 
     if (!file) {
       return new Response(JSON.stringify({ error: 'No file provided' }), {
@@ -187,9 +183,9 @@ async function handleUpload(request, env, corsHeaders) {
       });
     }
 
-    // Determine which bucket to use based on file type or explicit bucketType
+    // Determine which bucket to use based on file type
     let targetBucket;
-    if (bucketType === 'videos' || file.type.startsWith('video/')) {
+    if (file.type.startsWith('video/')) {
       targetBucket = env.WEDDING_VIDEOS_BUCKET;
     } else {
       targetBucket = env.WEDDING_PHOTOS_BUCKET;
@@ -200,9 +196,10 @@ async function handleUpload(request, env, corsHeaders) {
       uploadedBy: sessionId || 'anonymous',
       uploadedAt: Date.now().toString(),
       originalName: file.name,
+      fileType: file.type.startsWith('video/') ? 'video' : 'image',
     };
 
-    // Upload to R2 with metadata
+    // Upload to R2
     await targetBucket.put(key, file.stream(), {
       httpMetadata: {
         contentType: file.type,
@@ -213,9 +210,8 @@ async function handleUpload(request, env, corsHeaders) {
     return new Response(JSON.stringify({
       success: true,
       key: key,
-      bucketType: bucketType,
       sessionId: sessionId,
-      url: `${request.url.replace('/upload', '')}/download?key=${encodeURIComponent(key)}&bucketType=${bucketType}`,
+      url: `${request.url.replace('/upload', '')}/download?key=${encodeURIComponent(key)}`,
     }), {
       status: 200,
       headers: {
@@ -249,7 +245,6 @@ async function handleDownload(request, env, corsHeaders) {
   try {
     const url = new URL(request.url);
     const key = url.searchParams.get('key');
-    const bucketType = url.searchParams.get('bucketType') || 'photos';
 
     if (!key) {
       return new Response(JSON.stringify({ error: 'No key provided' }), {
@@ -261,16 +256,19 @@ async function handleDownload(request, env, corsHeaders) {
       });
     }
 
-    // Determine which bucket to use
-    let targetBucket;
-    if (bucketType === 'videos') {
-      targetBucket = env.WEDDING_VIDEOS_BUCKET;
-    } else {
-      targetBucket = env.WEDDING_PHOTOS_BUCKET;
+    // Determine which bucket to use based on file extension or try both
+    let targetBucket = env.WEDDING_PHOTOS_BUCKET; // Default to photos
+    
+    // Try to get from photos bucket first
+    let object = await env.WEDDING_PHOTOS_BUCKET.get(key);
+    
+    // If not found in photos, try videos bucket
+    if (!object) {
+      object = await env.WEDDING_VIDEOS_BUCKET.get(key);
+      if (object) {
+        targetBucket = env.WEDDING_VIDEOS_BUCKET;
+      }
     }
-
-    // Get object from R2
-    const object = await targetBucket.get(key);
 
     if (!object) {
       return new Response(JSON.stringify({ error: 'File not found' }), {
@@ -282,28 +280,12 @@ async function handleDownload(request, env, corsHeaders) {
       });
     }
 
-    // Determine cache headers based on file type
-    const isImage = object.httpMetadata?.contentType?.startsWith('image/');
-    const isVideo = object.httpMetadata?.contentType?.startsWith('video/');
-    
-    // Aggressive caching for images
-    const cacheHeaders = {
-      'Cache-Control': isImage ? 'public, max-age=31536000, immutable' : 'public, max-age=3600',
-      'ETag': `"${object.etag}"`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': object.size,
-    };
-
-    // Add compression for images
-    if (isImage) {
-      cacheHeaders['Content-Encoding'] = 'gzip';
-    }
-
-    // Return the file with optimized headers
+    // Return the file with appropriate headers
     return new Response(object.body, {
       headers: {
         'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream',
-        ...cacheHeaders,
+        'Cache-Control': 'public, max-age=3600',
+        'ETag': `"${object.etag}"`,
         ...corsHeaders,
       },
     });
@@ -334,10 +316,11 @@ async function handleList(request, env, corsHeaders) {
     const url = new URL(request.url);
     const prefix = url.searchParams.get('prefix') || '';
     const limit = parseInt(url.searchParams.get('limit') || '100');
-    const bucketType = url.searchParams.get('bucketType') || 'photos';
 
-    // Determine which bucket to use
+    // Determine which bucket to use based on bucketType parameter
     let targetBucket;
+    const bucketType = url.searchParams.get('bucketType') || 'photos';
+    
     if (bucketType === 'videos') {
       targetBucket = env.WEDDING_VIDEOS_BUCKET;
     } else {
@@ -355,15 +338,13 @@ async function handleList(request, env, corsHeaders) {
       size: obj.size,
       uploaded: obj.uploaded,
       httpMetadata: obj.httpMetadata,
-      customMetadata: obj.customMetadata, // Include custom metadata
-      bucketType: bucketType,
+      customMetadata: obj.customMetadata,
     }));
 
     return new Response(JSON.stringify({
       success: true,
       files: files,
       truncated: objects.truncated,
-      bucketType: bucketType,
     }), {
       status: 200,
       headers: {
@@ -384,7 +365,7 @@ async function handleList(request, env, corsHeaders) {
 }
 
 /**
- * Handle file deletion from R2 with ownership validation
+ * Handle file deletion from R2
  */
 async function handleDelete(request, env, corsHeaders) {
   if (request.method !== 'DELETE') {
@@ -397,8 +378,7 @@ async function handleDelete(request, env, corsHeaders) {
   try {
     const url = new URL(request.url);
     const key = url.searchParams.get('key');
-    const bucketType = url.searchParams.get('bucketType') || 'photos';
-    const sessionId = url.searchParams.get('sessionId'); // Guest session ID
+    const sessionId = url.searchParams.get('sessionId');
 
     if (!key) {
       return new Response(JSON.stringify({ error: 'No key provided' }), {
@@ -410,17 +390,18 @@ async function handleDelete(request, env, corsHeaders) {
       });
     }
 
-    // Determine which bucket to use
-    let targetBucket;
-    if (bucketType === 'videos') {
-      targetBucket = env.WEDDING_VIDEOS_BUCKET;
-    } else {
-      targetBucket = env.WEDDING_PHOTOS_BUCKET;
+    // Determine which bucket to use by trying both
+    let targetBucket = env.WEDDING_PHOTOS_BUCKET; // Default to photos
+    let object = await env.WEDDING_PHOTOS_BUCKET.head(key);
+    
+    // If not found in photos, try videos bucket
+    if (!object) {
+      object = await env.WEDDING_VIDEOS_BUCKET.head(key);
+      if (object) {
+        targetBucket = env.WEDDING_VIDEOS_BUCKET;
+      }
     }
 
-    // Get object metadata to check ownership
-    const object = await targetBucket.head(key);
-    
     if (!object) {
       return new Response(JSON.stringify({ error: 'File not found' }), {
         status: 404,
@@ -450,7 +431,6 @@ async function handleDelete(request, env, corsHeaders) {
     return new Response(JSON.stringify({
       success: true,
       message: 'File deleted successfully',
-      bucketType: bucketType,
     }), {
       status: 200,
       headers: {
@@ -484,7 +464,6 @@ async function handleMyPhotos(request, env, corsHeaders) {
   try {
     const url = new URL(request.url);
     const sessionId = url.searchParams.get('sessionId');
-    const bucketType = url.searchParams.get('bucketType') || 'photos';
 
     if (!sessionId) {
       return new Response(JSON.stringify({ error: 'No session ID provided' }), {
@@ -496,24 +475,23 @@ async function handleMyPhotos(request, env, corsHeaders) {
       });
     }
 
-    // Determine which bucket to use
-    let targetBucket;
-    if (bucketType === 'videos') {
-      targetBucket = env.WEDDING_VIDEOS_BUCKET;
-    } else {
-      targetBucket = env.WEDDING_PHOTOS_BUCKET;
-    }
-
-    // List all objects and filter by ownership
-    const objects = await targetBucket.list({
+    // List objects from both buckets and filter by ownership
+    const photosObjects = await env.WEDDING_PHOTOS_BUCKET.list({
+      limit: 1000,
+    });
+    
+    const videosObjects = await env.WEDDING_VIDEOS_BUCKET.list({
       limit: 1000,
     });
 
     const myFiles = [];
+    const processedKeys = new Set(); // Track processed keys to avoid duplicates
     
-    for (const obj of objects.objects) {
-      // Get object metadata to check ownership
-      const objectHead = await targetBucket.head(obj.key);
+    // Process photos bucket
+    for (const obj of photosObjects.objects) {
+      if (processedKeys.has(obj.key)) continue;
+      
+      const objectHead = await env.WEDDING_PHOTOS_BUCKET.head(obj.key);
       const uploadedBy = objectHead.customMetadata?.uploadedBy;
       
       if (uploadedBy === sessionId) {
@@ -521,17 +499,42 @@ async function handleMyPhotos(request, env, corsHeaders) {
           key: obj.key,
           size: obj.size,
           uploaded: obj.uploaded,
-          httpMetadata: obj.httpMetadata,
-          bucketType: bucketType,
+          httpMetadata: objectHead.httpMetadata,
           originalName: objectHead.customMetadata?.originalName || obj.key,
+          isOwned: true,
+          fileType: 'image',
         });
+        processedKeys.add(obj.key);
+      }
+    }
+    
+    // Process videos bucket
+    for (const obj of videosObjects.objects) {
+      if (processedKeys.has(obj.key)) continue;
+      
+      const objectHead = await env.WEDDING_VIDEOS_BUCKET.head(obj.key);
+      const uploadedBy = objectHead.customMetadata?.uploadedBy;
+      
+      if (uploadedBy === sessionId) {
+        myFiles.push({
+          key: obj.key,
+          size: obj.size,
+          uploaded: obj.uploaded,
+          httpMetadata: objectHead.httpMetadata,
+          originalName: objectHead.customMetadata?.originalName || obj.key,
+          isOwned: true,
+          fileType: 'video',
+        });
+        processedKeys.add(obj.key);
       }
     }
 
     return new Response(JSON.stringify({
       success: true,
       files: myFiles,
-      bucketType: bucketType,
+      totalFiles: myFiles.length,
+      ownedFiles: myFiles.length, // All files are owned by this session
+      publicFiles: 0, // No public files returned
     }), {
       status: 200,
       headers: {
@@ -559,7 +562,7 @@ function generateFileKey(fileName) {
   const randomId = Math.random().toString(36).substring(2, 15);
   const extension = fileName.split('.').pop();
   return `${timestamp}-${randomId}.${extension}`;
-} 
+}
 
 /**
  * Generate unique session ID
@@ -568,4 +571,4 @@ function generateSessionId() {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 15);
   return `${timestamp}-${randomId}`;
-} 
+}

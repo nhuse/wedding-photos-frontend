@@ -1,0 +1,115 @@
+img.image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(107, 122, 143, 0.2);
+    transition: all 0.3s ease;
+    border: 2px solid #FFE4B5;
+}
+
+img.image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(107, 122, 143, 0.3);
+}
+
+video.image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(107, 122, 143, 0.2);
+    transition: all 0.3s ease;
+    border: 2px solid #FFE4B5;
+}
+
+video.image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(107, 122, 143, 0.3);
+}
+
+/* Rustic session info styling */
+.session-info {
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%);
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+/* Rustic section headers */
+.section-header {
+  color: #5D4037;
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Image container gradients for beautiful photo display */
+.image-container {
+  background: linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(107, 122, 143, 0.2);
+  border: 2px solid #6B7A8F;
+  margin: 20px;
+  width: auto;
+  min-width: auto;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .image-container {
+    margin: 10px;
+    padding: 15px;
+    width: auto;
+    min-width: auto;
+  }
+  
+  .image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .section-header {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .session-info {
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    margin: 5px;
+    padding: 10px;
+    width: auto;
+    min-width: auto;
+  }
+  
+  .image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .section-header {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  .session-info {
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+}

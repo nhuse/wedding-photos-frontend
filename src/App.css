@@ -1,13 +1,181 @@
 .App {
   text-align: center;
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+  background: linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%, #F0F8FF 100%);
+  min-height: 100vh;
 }
 
 .App-header {
   min-height: 10vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   font-size: calc(10px + 2vmin);
-  background-color: #f6f2ef;
+  background: linear-gradient(135deg, #F5F5DC 0%, #FFE4B5 25%, #B8C5D1 100%);
+  border-bottom: 3px solid #6B7A8F;
+  box-shadow: 0 4px 12px rgba(107, 122, 143, 0.3);
+  padding: 0 20px;
+  position: relative;
+}
+
+/* Rustic button hover effects */
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(90, 134, 173, 0.4) !important;
+}
+
+/* Enhanced selected tab styling */
+button[style*="scale(1.05)"] {
+  animation: selectedTabGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes selectedTabGlow {
+  0% {
+    box-shadow: 0 6px 16px rgba(255, 179, 102, 0.4), 0 0 20px rgba(255, 179, 102, 0.2);
+  }
+  100% {
+    box-shadow: 0 6px 16px rgba(255, 179, 102, 0.6), 0 0 30px rgba(255, 179, 102, 0.3);
+  }
+}
+
+/* Rustic image container styling */
+.image-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(107, 122, 143, 0.2);
+  border: 2px solid #6B7A8F;
+  margin: 20px;
+}
+
+/* Rustic typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+  color: #5D4037;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Rustic loading states */
+.loading-text {
+  font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
+  color: #5D4037;
+  font-style: italic;
+}
+
+/* Navigation tab button styling */
+.nav-tab-button {
+  padding: 12px 24px;
+  color: white;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Playfair Display", "Georgia", serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Selected tab styling */
+.nav-tab-button.selected {
+  background-color: #FFB366;
+  border: 3px solid #FF8C00;
+  box-shadow: 0 6px 16px rgba(255, 179, 102, 0.4), inset 0 0 10px rgba(255, 179, 102, 0.2);
+  transform: scale(1.05);
+  text-shadow: 0 0 8px rgba(255, 179, 102, 0.5);
+}
+
+/* Unselected tab styling */
+.nav-tab-button:not(.selected) {
+  background-color: #5A86AD;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(90, 134, 173, 0.2);
+  transform: scale(1);
+}
+
+/* Hover effects */
+.nav-tab-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(90, 134, 173, 0.4) !important;
+}
+
+.nav-tab-button.selected:hover {
+  transform: scale(1.05) translateY(-2px);
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .App-header {
+    flex-direction: column;
+    padding: 10px;
+    min-height: auto;
+  }
+  
+  .App-header img {
+    width: 100px !important;
+    height: 100px !important;
+    margin: 10px 0 !important;
+  }
+  
+  .App-header span {
+    position: static !important;
+    transform: none !important;
+    font-size: 1.8rem !important;
+    margin: 5px 0 !important;
+    text-align: center !important;
+  }
+  
+  .App-header span:last-of-type {
+    font-size: 1.4rem !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .image-container {
+    margin: 10px;
+    padding: 15px;
+  }
+  
+  h3 {
+    font-size: 1.8rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  /* Increase gap between navigation tabs on mobile */
+  .nav-tab-container {
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .App-header {
+    padding: 5px;
+  }
+  
+  .App-header img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  
+  .App-header span {
+    font-size: 1.5rem !important;
+  }
+  
+  .App-header span:last-of-type {
+    font-size: 1.2rem !important;
+  }
+  
+  .image-container {
+    margin: 5px;
+    padding: 10px;
+  }
+  
+  h3 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Increase gap between navigation tabs on small mobile */
+  .nav-tab-container {
+    gap: 20px !important;
+  }
 }
