@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: calc(10px + 2vmin);
-  background: linear-gradient(135deg, #F5F5DC 0%, #FFE4B5 25%, #B8C5D1 100%);
+  background: white;
   border-bottom: 3px solid #6B7A8F;
   box-shadow: 0 4px 12px rgba(107, 122, 143, 0.3);
   padding: 0 20px;

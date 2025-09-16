@@ -149,12 +149,12 @@ function App() {
 
   return (
     <div className="App" style={{
-      background: 'linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%, #F0F8FF 100%)',
+      background: '#c9d9e8',
       minHeight: '100vh',
       fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif'
     }}>
       <header className="App-header" style={{
-        background: '#F5F5DC',
+        background: '#c9d9e8',
         borderBottom: '3px solid #6B7A8F',
         boxShadow: '0 4px 12px rgba(107, 122, 143, 0.3)',
         display: 'flex',
