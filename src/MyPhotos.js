@@ -215,7 +215,7 @@ function MyPhotos({ onFileDeleted = null }) {
         textAlign: 'center',
         textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
         fontSize: '2.5rem',
-        marginBottom: '10px',
+        marginBottom: '10px'
       }}>
         My Wedding Memories
       </h2>
