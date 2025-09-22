@@ -127,11 +127,7 @@ function MyPhotos({ onFileDeleted = null }) {
   if (sessionLoading) {
     return (
       <div className="image-container" style={{
-        background: 'linear-gradient(135deg, #FEFEFE 0%, #F5F5DC 100%)',
-        borderRadius: '12px',
         padding: '20px',
-        boxShadow: '0 4px 12px rgba(107, 122, 143, 0.2)',
-        border: '2px solid #6B7A8F'
       }}>
         <h2 style={{
           color: '#5D4037',
@@ -163,8 +159,6 @@ function MyPhotos({ onFileDeleted = null }) {
         background: 'linear-gradient(135deg, #FEFEFE 0%, #F5F5DC 100%)',
         borderRadius: '12px',
         padding: '20px',
-        boxShadow: '0 4px 12px rgba(107, 122, 143, 0.2)',
-        border: '2px solid #6B7A8F'
       }}>
         <h2 style={{
           color: '#5D4037',
@@ -180,12 +174,9 @@ function MyPhotos({ onFileDeleted = null }) {
         <div style={{ 
           marginBottom: 16, 
           padding: 16, 
-          background: 'linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%)', 
           borderRadius: 8,
-          border: '2px solid #F44336',
           color: '#C62828',
           fontFamily: '"Lora", "Georgia", serif',
-          boxShadow: '0 2px 8px rgba(244, 67, 54, 0.2)'
         }}>
           ❌ Session Error: {sessionError}
         </div>
@@ -215,20 +206,16 @@ function MyPhotos({ onFileDeleted = null }) {
 
   return (
     <div className="image-container" style={{
-      background: 'linear-gradient(135deg, #FEFEFE 0%, #F5F5DC 100%)',
-      borderRadius: '12px',
-      padding: '20px',
-      boxShadow: '0 4px 12px rgba(107, 122, 143, 0.2)',
-      border: '2px solid #6B7A8F'
+      padding: '10px',
     }}>
       <h2 style={{
         color: '#5D4037',
         fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: '20px',
         textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-        fontSize: '2rem'
+        fontSize: '2.5rem',
+        marginBottom: '10px',
       }}>
         My Wedding Memories
       </h2>
@@ -259,7 +246,6 @@ function MyPhotos({ onFileDeleted = null }) {
       {!loading && totalFiles === 0 && (
         <div style={{ 
           textAlign: 'center', 
-          padding: '40px 20px',
           color: '#666',
           fontSize: '2rem'
         }}>

@@ -1,7 +1,6 @@
 .App {
   text-align: center;
   font-family: 'Dancing Script', 'Playfair Display', 'Georgia', serif;
-  background: linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%, #F0F8FF 100%);
   min-height: 100vh;
 }
 
@@ -42,10 +41,7 @@ button[style*="scale(1.05)"] {
 /* Rustic image container styling */
 .image-container {
   background: white;
-  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(107, 122, 143, 0.2);
-  border: 2px solid #6B7A8F;
   margin: 20px;
 }
 

@@ -14,8 +14,10 @@
     "@uppy/dashboard": "^4.3.4",
     "@uppy/react": "^4.4.0",
     "@uppy/tus": "^4.2.2",
+    "@upstash/redis": "^1.35.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.9.1",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },

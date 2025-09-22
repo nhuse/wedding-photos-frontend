@@ -5,7 +5,6 @@ img.image {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(107, 122, 143, 0.2);
     transition: all 0.3s ease;
-    border: 2px solid #FFE4B5;
 }
 
 img.image:hover {
@@ -20,7 +19,6 @@ video.image {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(107, 122, 143, 0.2);
     transition: all 0.3s ease;
-    border: 2px solid #FFE4B5;
 }
 
 video.image:hover {
@@ -31,7 +29,6 @@ video.image:hover {
 /* Rustic session info styling */
 .session-info {
   background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%);
-  border: 2px solid #4CAF50;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
@@ -51,14 +48,11 @@ video.image:hover {
 
 /* Image container gradients for beautiful photo display */
 .image-container {
-  background: linear-gradient(135deg, #FEFEFE 0%, #FFE4B5 15%, #F5F5DC 85%);
-  border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(107, 122, 143, 0.2);
-  border: 2px solid #6B7A8F;
   margin: 20px;
   width: auto;
   min-width: auto;
+  background-color: #c9d9e8;
 }
 
 /* Mobile Responsive Design */
