@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useGuestSession } from './hooks/useGuestSession';
 import { getMyPhotos, deleteFileFromR2ViaWorker } from './utils/r2Worker';
+import PhotoModal from './components/PhotoModal';
 import './MyPhotos.css';
 
 function MyPhotos({ onFileDeleted = null }) {
@@ -10,6 +11,8 @@ function MyPhotos({ onFileDeleted = null }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [deleting, setDeleting] = useState({});
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   console.log(sessionId);
 
   const loadMyPhotos = useCallback(async () => {
@@ -121,6 +124,21 @@ function MyPhotos({ onFileDeleted = null }) {
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleDateString();
+  };
+
+  const handleMediaClick = (media) => {
+    // Add the publicUrl for the modal
+    const mediaWithUrl = {
+      ...media,
+      publicUrl: `${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(media.key)}`
+    };
+    setSelectedMedia(mediaWithUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMedia(null);
   };
 
   // Show loading state while session is initializing
@@ -272,7 +290,7 @@ function MyPhotos({ onFileDeleted = null }) {
           </h3>
           <div className="image-grid">
             {myPhotos.map((file) => (
-              <div key={file.key} className="image-item">
+              <div key={file.key} className="image-item" onClick={() => handleMediaClick(file)} style={{ cursor: 'pointer' }}>
                 <div className="image-wrapper">
                   <img
                     src={`${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}`}
@@ -281,7 +299,10 @@ function MyPhotos({ onFileDeleted = null }) {
                   />
                   <div className="image-overlay">
                     <button
-                      onClick={() => handleDelete(file.key)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(file.key);
+                      }}
                       disabled={deleting[file.key]}
                       className="delete-button"
                       style={{
@@ -327,16 +348,20 @@ function MyPhotos({ onFileDeleted = null }) {
           </h3>
           <div className="image-grid">
             {myVideos.map((file) => (
-              <div key={file.key} className="image-item">
+              <div key={file.key} className="image-item" onClick={() => handleMediaClick(file)} style={{ cursor: 'pointer' }}>
                 <div className="image-wrapper">
                   <video
                     src={`${process.env.REACT_APP_R2_WORKER_URL || 'https://wedding-photos-r2-worker.nate-huse1023.workers.dev'}/download?key=${encodeURIComponent(file.key)}`}
                     controls
                     className="image"
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <div className="image-overlay">
                     <button
-                      onClick={() => handleDelete(file.key)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(file.key);
+                      }}
                       disabled={deleting[file.key]}
                       className="delete-button"
                       style={{
@@ -391,6 +416,12 @@ function MyPhotos({ onFileDeleted = null }) {
           </button>
         </div>
       )}
+      
+      <PhotoModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        media={selectedMedia}
+      />
     </div>
   );
 }

@@ -1,6 +1,20 @@
+import React, { useState } from 'react';
 import './imageContainer.css';
+import PhotoModal from './components/PhotoModal';
 
 export default function ImageContainer({ imageObjects }) {
+  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleMediaClick = (media) => {
+    setSelectedMedia(media);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMedia(null);
+  };
   console.log('ImageContainer received imageObjects:', imageObjects);
   
   const formatDate = (timestamp) => {
@@ -8,8 +22,9 @@ export default function ImageContainer({ imageObjects }) {
   };
 
   return (
-    <div className="image-grid">
-      {imageObjects.map(media => {
+    <>
+      <div className="image-grid">
+        {imageObjects.map(media => {
         console.log('Processing media item:', media);
         console.log('Media originalName:', media.originalName);
         console.log('Media name:', media.name);
@@ -32,12 +47,13 @@ export default function ImageContainer({ imageObjects }) {
         
         if (isVideo) {
           return (
-            <div key={media.key} className="image-item">
+            <div key={media.key} className="image-item" onClick={() => handleMediaClick(media)} style={{ cursor: 'pointer' }}>
               <div className="image-wrapper">
                 <video
                   controls
                   className="image"
                   preload="metadata"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <source src={media.publicUrl} type="video/mp4" />
                   Your browser does not support the video tag.
@@ -52,7 +68,7 @@ export default function ImageContainer({ imageObjects }) {
           );
         } else {
           return (
-            <div key={media.key} className="image-item">
+            <div key={media.key} className="image-item" onClick={() => handleMediaClick(media)} style={{ cursor: 'pointer' }}>
               <div className="image-wrapper">
                 <img 
                   src={media.publicUrl} 
@@ -69,6 +85,13 @@ export default function ImageContainer({ imageObjects }) {
           );
         }
       })}
-    </div>
+      </div>
+      
+      <PhotoModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        media={selectedMedia}
+      />
+    </>
   );
 }
