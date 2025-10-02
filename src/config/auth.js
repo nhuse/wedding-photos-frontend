@@ -1,6 +1,6 @@
 // Authentication tokens for wedding photos app
 export const QR_TOKEN = "qr_code_token_1a2b3c4d5e6f7g8h9i0j";
-export const PASSWORD_TOKEN = "wedding_2025_photos_access";
+export const PASSWORD_TOKEN = "nsquared2025";
 
 // Auth-related URLs (using relative paths)
 export const AUTH_URLS = {
