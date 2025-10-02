@@ -13,6 +13,9 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .image-item {
@@ -20,6 +23,9 @@
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .image-item:hover {
@@ -31,13 +37,19 @@
     position: relative;
     overflow: hidden;
     padding: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .image {
     width: 100%;
+    max-width: 100%;
     height: 200px;
     object-fit: cover;
     transition: transform 0.3s ease;
+    display: block;
+    box-sizing: border-box;
 }
 
 .image:hover {
@@ -106,20 +118,40 @@
     margin: 10px;
     padding: 15px;
     gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .image-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
     padding: 15px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .image-item {
     border-radius: 6px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .image-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .image {
     height: 150px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    object-fit: cover;
+    display: block;
   }
   
   .image-name {
@@ -142,16 +174,39 @@
     margin: 5px;
     padding: 10px;
     gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .image-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
     padding: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .image-item {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .image-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .image {
     height: 120px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    object-fit: cover;
+    display: block;
   }
   
   .image-name {

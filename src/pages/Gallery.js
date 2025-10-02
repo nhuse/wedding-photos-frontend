@@ -75,13 +75,14 @@ function Gallery({ refreshTrigger = 0 }) {
 
   return (
     <div style={{ 
-      margin: '20px',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       height: 'fit-content',
-      padding: '20px'
+      padding: '40px 20px',
+      width: '100%',
+      boxSizing: 'border-box'
     }}>
       <h3 style={{ 
         marginBottom: '20px', 
@@ -96,7 +97,7 @@ function Gallery({ refreshTrigger = 0 }) {
         Wedding Gallery
       </h3>
       
-      <div style={{ width: '90%' }}>
+      <div style={{ width: '100%', maxWidth: '1200px', boxSizing: 'border-box' }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '20px' }}>
             <div className="loading-text">Loading images and videos...</div>
