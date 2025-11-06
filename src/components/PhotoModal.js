@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './PhotoModal.css';
 
-const PhotoModal = ({ isOpen, onClose, media }) => {
+const PhotoModal = ({ isOpen, onClose, imageObjects, currentIndex }) => {
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -9,32 +10,58 @@ const PhotoModal = ({ isOpen, onClose, media }) => {
   const modalRef = useRef(null);
   const imageRef = useRef(null);
 
+  // Update current index when currentIndex prop changes
+  useEffect(() => {
+    if (currentIndex !== null && currentIndex !== undefined) {
+      setCurrentMediaIndex(currentIndex);
+    }
+  }, [currentIndex]);
+
   // Reset state when modal opens/closes or media changes
   useEffect(() => {
     if (isOpen) {
       setZoomLevel(1);
       setImagePosition({ x: 0, y: 0 });
     }
-  }, [isOpen, media]);
+  }, [isOpen, currentMediaIndex]);
 
-  // Handle escape key
+  // Navigation functions
+  const handleNext = () => {
+    if (imageObjects && imageObjects.length > 0) {
+      setCurrentMediaIndex((prev) => (prev + 1) % imageObjects.length);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (imageObjects && imageObjects.length > 0) {
+      setCurrentMediaIndex((prev) => (prev - 1 + imageObjects.length) % imageObjects.length);
+    }
+  };
+
+  // Handle keyboard navigation (escape, left arrow, right arrow)
   useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+    const handleKeyDown = (e) => {
+      if (!isOpen) return;
+      
+      if (e.key === 'Escape') {
         onClose();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevious();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, imageObjects]);
 
   // Handle click outside modal
   const handleBackdropClick = (e) => {
@@ -58,6 +85,9 @@ const PhotoModal = ({ isOpen, onClose, media }) => {
 
   // Handle download
   const handleDownload = async () => {
+    const media = imageObjects[currentMediaIndex];
+    if (!media) return;
+    
     try {
       const response = await fetch(media.publicUrl);
       const blob = await response.blob();
@@ -122,7 +152,10 @@ const PhotoModal = ({ isOpen, onClose, media }) => {
     setIsDragging(false);
   };
 
-  if (!isOpen || !media) return null;
+  if (!isOpen || !imageObjects || imageObjects.length === 0) return null;
+
+  const media = imageObjects[currentMediaIndex];
+  if (!media) return null;
 
   const isVideo = media.type === 'video' || 
                   media.key?.toLowerCase().match(/\.(mp4|mov|avi|wmv|flv|webm)$/);
@@ -164,6 +197,24 @@ const PhotoModal = ({ isOpen, onClose, media }) => {
             {zoomLevel > 1 ? "🔍-" : "🔍+"}
           </button>
         </div>
+
+        {/* Navigation arrows */}
+        <button 
+          className="modal-nav-btn modal-nav-left" 
+          onClick={handlePrevious}
+          aria-label="Previous image"
+          title="Previous image"
+        >
+          ‹
+        </button>
+        <button 
+          className="modal-nav-btn modal-nav-right" 
+          onClick={handleNext}
+          aria-label="Next image"
+          title="Next image"
+        >
+          ›
+        </button>
 
         {/* Media content */}
         <div 

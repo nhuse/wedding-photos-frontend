@@ -3,17 +3,18 @@ import './imageContainer.css';
 import PhotoModal from './components/PhotoModal';
 
 export default function ImageContainer({ imageObjects }) {
-  const [selectedMedia, setSelectedMedia] = useState(null);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMediaClick = (media) => {
-    setSelectedMedia(media);
+    const index = imageObjects.findIndex(item => item.key === media.key);
+    setSelectedMediaIndex(index);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedMedia(null);
+    setSelectedMediaIndex(null);
   };
   console.log('ImageContainer received imageObjects:', imageObjects);
   
@@ -90,7 +91,8 @@ export default function ImageContainer({ imageObjects }) {
       <PhotoModal 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        media={selectedMedia}
+        imageObjects={imageObjects}
+        currentIndex={selectedMediaIndex}
       />
     </>
   );
