@@ -33,7 +33,6 @@ function FileUploaderWorker({ onUploadSuccess }) {
       const files = previews.map(preview => preview.file);
       const results = await uploadMultipleFiles(files);
       
-      console.log('Upload results:', results);
       alert(`Upload complete! Successfully uploaded ${results.length} files.`);
       
       // Clear previews and reset upload state

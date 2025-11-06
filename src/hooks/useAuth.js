@@ -20,7 +20,6 @@ export function useAuth() {
       
       // If no token in URL but we have valid cached auth, use it
       if (!token && cachedAuth) {
-        console.log('Using cached authentication');
         setIsAuthenticated(true);
         // Update URL to include the cached token for consistency
         const newUrl = new URL(window.location.href);

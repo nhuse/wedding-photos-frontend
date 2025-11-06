@@ -16,7 +16,6 @@ export default function ImageContainer({ imageObjects }) {
     setIsModalOpen(false);
     setSelectedMediaIndex(null);
   };
-  console.log('ImageContainer received imageObjects:', imageObjects);
   
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleDateString();
@@ -26,11 +25,6 @@ export default function ImageContainer({ imageObjects }) {
     <>
       <div className="image-grid">
         {imageObjects.map(media => {
-        console.log('Processing media item:', media);
-        console.log('Media originalName:', media.originalName);
-        console.log('Media name:', media.name);
-        console.log('Media key:', media.key);
-        
         // Check if it's a video based on file extension or type
         const isVideo = media.type === 'video' || 
                        media.key?.toLowerCase().match(/\.(mp4|mov|avi|wmv|flv|webm)$/);
@@ -44,7 +38,6 @@ export default function ImageContainer({ imageObjects }) {
           const mediaType = media.type === 'video' ? 'Video' : 'Photo';
           return `${mediaType} ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.${extension}`;
         })();
-        console.log('Final display name:', displayName);
         
         if (isVideo) {
           return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './PhotoModal.css';
 
 const PhotoModal = ({ isOpen, onClose, imageObjects, currentIndex }) => {
@@ -26,17 +26,17 @@ const PhotoModal = ({ isOpen, onClose, imageObjects, currentIndex }) => {
   }, [isOpen, currentMediaIndex]);
 
   // Navigation functions
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (imageObjects && imageObjects.length > 0) {
       setCurrentMediaIndex((prev) => (prev + 1) % imageObjects.length);
     }
-  };
+  }, [imageObjects]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (imageObjects && imageObjects.length > 0) {
       setCurrentMediaIndex((prev) => (prev - 1 + imageObjects.length) % imageObjects.length);
     }
-  };
+  }, [imageObjects]);
 
   // Handle keyboard navigation (escape, left arrow, right arrow)
   useEffect(() => {
@@ -61,7 +61,7 @@ const PhotoModal = ({ isOpen, onClose, imageObjects, currentIndex }) => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose, imageObjects]);
+  }, [isOpen, onClose, handleNext, handlePrevious]);
 
   // Handle click outside modal
   const handleBackdropClick = (e) => {

@@ -105,6 +105,17 @@ function Gallery({ refreshTrigger = 0 }) {
               This may take a moment on first load
             </div>
           </div>
+        ) : imageObjects.length === 0 ? (
+          <div style={{ 
+            textAlign: 'center', 
+            color: '#666',
+            fontSize: '2rem'
+          }}>
+            <div>You haven't uploaded any photos or videos yet.</div>
+            <div style={{ marginTop: '10px', fontSize: '1.75rem' }}>
+              Upload some to see them here!
+            </div>
+          </div>
         ) : (
           <ImageContainer imageObjects={imageObjects} />
         )}

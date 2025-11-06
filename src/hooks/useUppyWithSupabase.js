@@ -41,7 +41,6 @@ export const useUppyWithSupabase = () => {
                 } else if (file.type.startsWith("video/")) {
                     bucketName = "videos";
                 } else {
-                    console.log("File type not supported");
                     console.error("File type not supported");
                     return;
                 }

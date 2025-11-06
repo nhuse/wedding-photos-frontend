@@ -72,34 +72,9 @@ function Home() {
         <div style={{ width: '150px', visibility: 'hidden' }}></div>
       </header>
 
-      {/* Upload Section */}
-      <div style={{ 
-        margin: '10px 20px 0px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 'fit-content',
-        padding: '20px 0px 0px 0px'
-      }}>
-        <h3 style={{ 
-          marginBottom: '15px', 
-          color: '#5D4037', 
-          textAlign: 'center',
-          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
-          fontWeight: 'bold',
-          marginTop: '0px',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-          fontSize: '2.5rem'
-        }}>
-          Upload Your Wedding Memories
-        </h3>
-        <FileUploaderWorker onUploadSuccess={handleUploadSuccess} />
-      </div>
-
       {/* Navigation Buttons */}
       <div style={{
-        margin: '0 20px 20px 20px',
+        margin: '30px 20px 20px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -133,6 +108,31 @@ function Home() {
             My Photos & Videos
           </button>
         </div>
+      </div>
+
+      {/* Upload Section */}
+      <div style={{ 
+        margin: '10px 20px 0px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 'fit-content',
+        padding: '20px 0px 0px 0px'
+      }}>
+        <h3 style={{ 
+          marginBottom: '15px', 
+          color: '#5D4037', 
+          textAlign: 'center',
+          fontFamily: '"Dancing Script", "Playfair Display", "Georgia", serif',
+          fontWeight: 'bold',
+          marginTop: '0px',
+          textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+          fontSize: '2.5rem'
+        }}>
+          Upload Your Wedding Memories
+        </h3>
+        <FileUploaderWorker onUploadSuccess={handleUploadSuccess} />
       </div>
 
       {/* Gallery Section */}

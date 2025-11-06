@@ -17,7 +17,6 @@ export function setAuthCache(token, authType = 'password') {
   
   try {
     localStorage.setItem(AUTH_CACHE_KEY, JSON.stringify(authData));
-    console.log('Authentication cached for 24 hours');
   } catch (error) {
     console.error('Failed to cache authentication:', error);
     // Fallback to sessionStorage if localStorage fails
@@ -48,19 +47,16 @@ export function getAuthCache() {
     
     // Check if cache has expired
     if (now > authData.expiresAt) {
-      console.log('Authentication cache expired, clearing...');
       clearAuthCache();
       return null;
     }
     
     // Check if cache is still valid (within 24 hours)
     if (now - authData.timestamp > CACHE_DURATION) {
-      console.log('Authentication cache expired, clearing...');
       clearAuthCache();
       return null;
     }
     
-    console.log('Valid authentication cache found');
     return authData;
   } catch (error) {
     console.error('Failed to read authentication cache:', error);
@@ -76,7 +72,6 @@ export function clearAuthCache() {
   try {
     localStorage.removeItem(AUTH_CACHE_KEY);
     sessionStorage.removeItem(AUTH_CACHE_KEY);
-    console.log('Authentication cache cleared');
   } catch (error) {
     console.error('Failed to clear authentication cache:', error);
   }

@@ -13,7 +13,6 @@ function MyPhotos({ onFileDeleted = null }) {
   const [deleting, setDeleting] = useState({});
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(sessionId);
 
   const loadMyPhotos = useCallback(async () => {
     if (!sessionId) return;
@@ -24,37 +23,15 @@ function MyPhotos({ onFileDeleted = null }) {
 
       // Load all files from the single bucket
       const result = await getMyPhotos(sessionId);
-      console.log('Files result:', result); // Debug logging
       
       // Separate photos and videos based on file type
       const allFiles = result.files || [];
-      console.log('All files:', allFiles); // Debug logging
-      console.log('Total files returned:', allFiles.length);
-      
-      // Check what fields are actually available
-      if (allFiles.length > 0) {
-        console.log('First file structure:', allFiles[0]);
-        console.log('First file fields:', Object.keys(allFiles[0]));
-        console.log('First file originalName:', allFiles[0].originalName);
-        console.log('First file name:', allFiles[0].name);
-        console.log('First file key:', allFiles[0].key);
-        console.log('First file fileType:', allFiles[0].fileType);
-        console.log('First file type:', allFiles[0].type);
-        
-        // Check if there are any video-like files
-        const potentialVideos = allFiles.filter(file => {
-          const key = file.key.toLowerCase();
-          return key.includes('.mp4') || key.includes('.mov') || key.includes('.m4v') || key.includes('.3gp');
-        });
-        console.log('Potential video files by extension:', potentialVideos);
-      }
       
       // Filter based on the actual field names in the response
       const photos = allFiles.filter(file => {
         // Check multiple possible field names
         const fileType = file.fileType || file.type || 'image';
         const isPhoto = fileType === 'image' || fileType === 'photo' || fileType.startsWith('image/');
-        console.log(`File ${file.key}: fileType=${file.fileType}, type=${file.type}, isPhoto=${isPhoto}`);
         return isPhoto;
       });
       
@@ -64,12 +41,8 @@ function MyPhotos({ onFileDeleted = null }) {
         const isVideo = fileType === 'video' || 
                        fileType.startsWith('video/') ||
                        file.key.toLowerCase().match(/\.(mp4|mov|avi|wmv|flv|webm|m4v|3gp)$/);
-        console.log(`File ${file.key}: fileType=${file.fileType}, type=${file.type}, isVideo=${isVideo}, key=${file.key}`);
         return isVideo;
       });
-      
-      console.log('Filtered photos:', photos);
-      console.log('Filtered videos:', videos);
       
       setMyPhotos(photos);
       setMyVideos(videos);
@@ -316,11 +289,7 @@ function MyPhotos({ onFileDeleted = null }) {
                 </div>
                 <div className="image-info">
                   <div className="image-name">
-                    {(() => {
-                      const displayName = file.originalName || file.key.split('/').pop();
-                      console.log('MyPhotos photo display name:', displayName, 'for file:', file);
-                      return displayName;
-                    })()}
+                    {file.originalName || file.key.split('/').pop()}
                   </div>
                   <div className="image-details">
                     {formatFileSize(file.size)} • {formatDate(file.uploaded)}
@@ -375,11 +344,7 @@ function MyPhotos({ onFileDeleted = null }) {
                 </div>
                 <div className="image-info">
                   <div className="image-name">
-                    {(() => {
-                      const displayName = file.originalName || file.key.split('/').pop();
-                      console.log('MyPhotos video display name:', displayName, 'for file:', file);
-                      return displayName;
-                    })()}
+                    {file.originalName || file.key.split('/').pop()}
                   </div>
                   <div className="image-details">
                     {formatFileSize(file.size)} • {formatDate(file.uploaded)}
