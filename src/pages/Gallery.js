@@ -6,11 +6,11 @@ import { listFilesFromR2ViaWorker } from '../utils/r2Worker';
 async function getR2Files() {
   try {
     // Get photos from photos bucket
-    const photosResult = await listFilesFromR2ViaWorker('', 100, 'photos');
+    const photosResult = await listFilesFromR2ViaWorker('photos');
     const photos = photosResult.files || [];
     
     // Get videos from videos bucket
-    const videosResult = await listFilesFromR2ViaWorker('', 100, 'videos');
+    const videosResult = await listFilesFromR2ViaWorker('videos');
     const videos = videosResult.files || [];
     
     // Convert photos to the format expected by ImageContainer
@@ -41,10 +41,9 @@ async function getR2Files() {
       })()
     }));
     
-    // Combine photos and videos, sort by upload date (most recent first), and take the 10 most recent
+    // Combine photos and videos, sort by upload date (most recent first)
     const allMedia = [...photoObjects, ...videoObjects]
-      .sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded))
-      .slice(0, 10);
+      .sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
     
     return { imageObjects: allMedia };
   } catch (error) {

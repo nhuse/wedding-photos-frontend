@@ -132,19 +132,16 @@ export const getFileFromR2ViaWorker = (key) => {
 
 /**
  * List files from R2 via Worker
- * @param {string} prefix - Optional prefix filter
- * @param {number} limit - Optional limit
  * @param {string} bucketType - 'photos' or 'videos'
  * @returns {Promise<Array>} - List of files
  */
-export const listFilesFromR2ViaWorker = async (prefix = '', limit = 100, bucketType = 'photos') => {
+export const listFilesFromR2ViaWorker = async (bucketType = 'photos') => {
   try {
     const url = new URL(`${WORKER_URL}/list`);
-    url.searchParams.set('prefix', prefix);
-    url.searchParams.set('limit', limit.toString());
     url.searchParams.set('bucketType', bucketType);
 
     const response = await fetch(url.toString());
+    console.log(response);
 
     if (!response.ok) {
       const error = await response.json();
